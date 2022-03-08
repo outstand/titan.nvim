@@ -1,5 +1,8 @@
 # titan.nvim
 
+![titan](https://user-images.githubusercontent.com/146013/157272537-48f01c89-0ae6-45bc-a44f-c4db2f8f087b.jpg)
+
+
 ## Recommended setup:
 
 init.lua:
