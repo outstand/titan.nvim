@@ -42,6 +42,7 @@ local titan_packer_util = require("titan.packer.util")
 
 function M.startup(user_packer_config)
   local titan_packer_config = require("titan").packer_config
+  local overrides = {}
 
   require('packer').startup(function(use)
     for _, plugin_data in ipairs(titan_packer_config) do
@@ -55,8 +56,18 @@ function M.startup(user_packer_config)
       if user_packer_config.plugin_specs_by_name[name] ~= nil then
         logger.debug("USER: " .. name)
         use(user_packer_config.plugin_specs_by_name[name].spec)
+        overrides[#overrides + 1] = name
       else
         logger.debug("titan: " .. name)
+        use(plugin_spec)
+      end
+    end
+
+    for _, plugin_data in ipairs(user_packer_config.plugin_specs) do
+      local plugin_spec = plugin_data.spec
+      local name = plugin_data.name
+
+      if not vim.tbl_contains(overrides, name) then
         use(plugin_spec)
       end
     end
@@ -86,10 +97,10 @@ local function use(plugin_spec)
     spec = plugin_spec,
     line = debug.getinfo(2, 'l').currentline,
   }
-  plugin_specs[#plugin_specs + 1] = spec
+  spec.name = titan_packer_util.plugin_name(spec.spec, spec.line)
 
-  local name = titan_packer_util.plugin_name(spec.spec, spec.line)
-  plugin_specs_by_name[name] = spec
+  plugin_specs[#plugin_specs + 1] = spec
+  plugin_specs_by_name[spec.name] = spec
 end
 
 function M.reset()
