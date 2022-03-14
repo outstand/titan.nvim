@@ -61,6 +61,7 @@ function M.setup()
       name = "open",
       d = { function() nvim_tree.toggle(true) end, "Open directory" },
       f = { function() nvim_tree.find_file(true) end, "Focus file in directory" },
+      w = { "<cmd>Telescope workspaces<cr>", "Open workspace" },
     },
     t = {
       name = "terminal",
