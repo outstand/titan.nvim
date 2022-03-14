@@ -144,7 +144,31 @@ local function tsserver_cmd(opts)
   return language_server_cmd(opts)
 end
 
+M.custom_commands = nil
+
+function M.add_custom_command(name, cmd)
+  M.custom_commands[name] = cmd
+end
+
+function M.reload_custom_commands()
+  logger.debug("Reload custom commands: ", M.custom_commands)
+  for name, cmd in pairs(M.custom_commands) do
+    logger.debug("Reloading ", name, cmd)
+
+    local config = lspconfig[name]
+
+    if config.manager then
+      for _, client in ipairs(config.manager.clients()) do
+        logger.debug("Stopping client", client.name)
+        client.stop(true)
+      end
+    end
+  end
+end
+
 function M.setup()
+  M.custom_commands = {}
+
   -- Enable the following language servers
   local servers = { 'clangd', 'rust_analyzer', 'pyright' }
   for _, lsp in ipairs(servers) do
@@ -157,10 +181,16 @@ function M.setup()
   -- vim.lsp.set_log_level("trace")
   -- require("vim.lsp.log").set_format_func(vim.inspect)
 
+  M.add_custom_command("elixirls", function()
+    return { elixirls_cmd() }
+  end)
   lspconfig.elixirls.setup{
     on_attach = on_attach,
     capabilities = capabilities,
-    cmd = { elixirls_cmd() },
+    cmd = M.custom_commands.elixirls(),
+    on_new_config = function(new_config, _)
+      new_config.cmd = M.custom_commands.elixirls()
+    end,
     settings = {
       elixirLS = {
         mixEnv = "test",
@@ -168,10 +198,16 @@ function M.setup()
     }
   }
 
+  M.add_custom_command("solargraph", function()
+    return { solargraph_cmd(), "stdio" }
+  end)
   lspconfig.solargraph.setup{
     on_attach = on_attach,
     capabilities = capabilities,
-    cmd = { solargraph_cmd(), "stdio" },
+    cmd = M.custom_commands.solargraph(),
+    on_new_config = function(new_config, _)
+      new_config.cmd = M.custom_commands.solargraph()
+    end,
     settings = {
       solargraph = {
         folding = false,
@@ -180,10 +216,16 @@ function M.setup()
     }
   }
 
+  M.add_custom_command("tsserver", function()
+    return { tsserver_cmd(), "--stdio" }
+  end)
   lspconfig.tsserver.setup{
     on_attach = on_attach,
     capabilities = capabilities,
-    cmd = { tsserver_cmd(), "--stdio" },
+    cmd = M.custom_commands.tsserver(),
+    on_new_config = function(new_config, _)
+      new_config.cmd = M.custom_commands.tsserver()
+    end,
     init_options = {
       hostInfo = "neovim",
       logVerbosity = "verbose"
