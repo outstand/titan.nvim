@@ -41,7 +41,7 @@ local win_bg = palette.bg_tools.lighten(4)
 
 local tabline = {
   hl = { fg = palette.fg_tools, bg = palette.bg_tools },
-  layout = 'active_tab_with_wins',
+  layout = 'active_wins_at_tail',
   head = {
     { '  ', hl = { fg = palette.fg_tools, bg = palette.bg_tools } },
     { '', hl = { fg = palette.bg_tools, bg = palette.bg_tools } },
@@ -85,6 +85,10 @@ local tabline = {
     end,
     left_sep = { '', hl = { fg = win_bg, bg = palette.bg_tools } },
     right_sep = { '', hl = { fg = win_bg, bg = palette.bg_tools } },
+  },
+  tail = {
+    { '', hl = { fg = palette.bg_tools, bg = palette.bg_tools } },
+    { '  ', hl = { fg = palette.fg_tools, bg = palette.bg_tools } },
   },
 }
 
