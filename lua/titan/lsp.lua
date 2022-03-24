@@ -2,6 +2,7 @@ local M = {}
 
 local lspconfig = require 'lspconfig'
 local lsputil = require("lspconfig.util")
+local lsp_installer = require("nvim-lsp-installer")
 local lsp_status = require("lsp-status")
 lsp_status.config {
   current_function = false,
@@ -169,68 +170,87 @@ end
 function M.setup()
   M.custom_commands = {}
 
-  -- Enable the following language servers
-  local servers = { 'clangd', 'rust_analyzer', 'pyright', 'terraformls', 'bashls' }
-  for _, lsp in ipairs(servers) do
-    lspconfig[lsp].setup {
-      on_attach = on_attach,
-      capabilities = capabilities,
-    }
-  end
-
   -- vim.lsp.set_log_level("trace")
   -- require("vim.lsp.log").set_format_func(vim.inspect)
 
   M.add_custom_command("elixirls", function()
     return { elixirls_cmd() }
   end)
-  lspconfig.elixirls.setup{
-    on_attach = on_attach,
-    capabilities = capabilities,
-    cmd = M.custom_commands.elixirls(),
-    on_new_config = function(new_config, _)
-      new_config.cmd = M.custom_commands.elixirls()
-    end,
-    settings = {
-      elixirLS = {
-        mixEnv = "test",
-      }
-    }
-  }
-
   M.add_custom_command("solargraph", function()
     return { solargraph_cmd(), "stdio" }
   end)
-  lspconfig.solargraph.setup{
-    on_attach = on_attach,
-    capabilities = capabilities,
-    cmd = M.custom_commands.solargraph(),
-    on_new_config = function(new_config, _)
-      new_config.cmd = M.custom_commands.solargraph()
-    end,
-    settings = {
-      solargraph = {
-        folding = false,
-        logLevel = "debug",
-      }
-    }
-  }
-
   M.add_custom_command("tsserver", function()
     return { tsserver_cmd(), "--stdio" }
   end)
-  lspconfig.tsserver.setup{
-    on_attach = on_attach,
-    capabilities = capabilities,
-    cmd = M.custom_commands.tsserver(),
-    on_new_config = function(new_config, _)
-      new_config.cmd = M.custom_commands.tsserver()
+
+  local enhance_server_opts = {
+    ["elixirls"] = function(opts)
+      opts.cmd = M.custom_commands.elixirls()
+      opts.on_new_config = function(new_config, _)
+        new_config.cmd = M.custom_commands.elixirls()
+      end
+      opts.settings = {
+        elixirLS = {
+          mixEnv = "test",
+        }
+      }
     end,
-    init_options = {
-      hostInfo = "neovim",
-      logVerbosity = "verbose"
-    }
+    ["solargraph"] = function(opts)
+      opts.cmd = M.custom_commands.solargraph()
+      opts.on_new_config = function(new_config, _)
+        new_config.cmd = M.custom_commands.solargraph()
+      end
+      opts.settings = {
+        solargraph = {
+          folding = false,
+          logLevel = "debug",
+        }
+      }
+    end,
+    ["tsserver"] = function(opts)
+      opts.cmd = M.custom_commands.tsserver()
+      opts.on_new_config = function(new_config, _)
+        new_config.cmd = M.custom_commands.tsserver()
+      end
+      opts.init_options = {
+        hostInfo = "neovim",
+        logVerbosity = "verbose"
+      }
+    end,
   }
+
+  -- Enable the following language servers
+  local servers = {
+    'clangd',
+    'rust_analyzer',
+    'pyright',
+    'terraformls',
+    'bashls',
+    'elixirls',
+    'solargraph',
+    'tsserver',
+  }
+
+  for _, name in ipairs(servers) do
+    local server_is_found, server = lsp_installer.get_server(name)
+    if server_is_found and not server:is_installed() then
+      print("Installing " .. name)
+      server:install()
+    end
+  end
+
+  lsp_installer.on_server_ready(function(server)
+    local opts = {
+      on_attach = on_attach,
+      capabilities = capabilities,
+    }
+
+    if enhance_server_opts[server.name] then
+      enhance_server_opts[server.name](opts)
+    end
+
+    server:setup(opts)
+  end)
 
   -- Example custom server
   -- Make runtime files discoverable to the server
