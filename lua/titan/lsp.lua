@@ -2,7 +2,9 @@ local M = {}
 
 local lspconfig = require 'lspconfig'
 local lsputil = require("lspconfig.util")
+
 local lsp_installer = require("nvim-lsp-installer")
+
 local lsp_status = require("lsp-status")
 lsp_status.config {
   current_function = false,
@@ -58,13 +60,19 @@ end
 
 --- Build the language server command.
 -- @param opts options
--- @param opts.locations table Locations to search relative to the workspace root
--- @param opts.fallback_dir string Path to use if locations don't contain the binary
+-- @param opts.name string Server name
+-- @param opts.locations string[] Locations to search relative to the workspace root
+-- @param opts.fallback_locations string[] Fallback locations to search relative to
+--        nvim-lsp-installer root path or specified fallback_root
+-- @param opts.fallback_root? string User customized fallback root. Defaults to
+--        ~/.local/share/lsp
 -- @return a string containing the command
 local function language_server_cmd(opts)
   opts = opts or {}
-  local fallback_dir = opts.fallback_dir
+
   local locations = opts.locations or {}
+  local fallback_locations = opts.fallback_locations or {}
+  local fallback_root = opts.fallback_root or "~/.local/share/lsp"
 
   local root = workspace_root()
   if not root then
@@ -79,7 +87,24 @@ local function language_server_cmd(opts)
     end
   end
 
-  local fallback = vim.fn.expand(fallback_dir)
+  local root_dir
+
+  local server_is_found, server = lsp_installer.get_server(opts.name)
+  if server_is_found and server:is_installed() then
+    root_dir = server.root_dir
+  else
+    root_dir = fallback_root
+  end
+
+  for _, location in ipairs(fallback_locations) do
+    local exists, dir = dir_has_file(root_dir, location)
+    if exists then
+      logger.fmt_debug("language_server_cmd: %s", vim.fn.expand(dir))
+      return vim.fn.expand(dir)
+    end
+  end
+
+  local fallback = vim.fn.expand(lsputil.path.join(fallback_root, fallback_locations[#fallback_locations]))
   logger.fmt_debug("language_server_cmd: %s", fallback)
   return fallback
 end
@@ -93,15 +118,16 @@ local function elixirls_cmd(opts)
     "force",
     opts,
     {
+      name = "elixirls",
       locations = {
         ".elixir-ls-release/language_server.sh",
         ".elixir_ls/release/language_server.sh",
       },
+      fallback_locations = {
+        "elixir-ls/language_server.sh",
+      },
     }
   )
-
-  opts.fallback_dir = opts.fallback_dir or vim.env.XDG_DATA_HOME or "~/.local/share"
-  opts.fallback_dir = string.format("%s/lsp/elixir-ls/%s", opts.fallback_dir, "language_server.sh")
 
   return language_server_cmd(opts)
 end
@@ -115,14 +141,16 @@ local function solargraph_cmd(opts)
     "force",
     opts,
     {
+      name = "solargraph",
       locations = {
         ".bin/solargraph",
       },
+      fallback_locations = {
+        "bin/solargraph",
+        "solargraph",
+      },
     }
   )
-
-  opts.fallback_dir = opts.fallback_dir or vim.env.XDG_DATA_HOME or "~/.local/share"
-  opts.fallback_dir = string.format("%s/lsp/solargraph/%s", opts.fallback_dir, "solargraph")
 
   return language_server_cmd(opts)
 end
@@ -133,14 +161,16 @@ local function tsserver_cmd(opts)
     "force",
     opts,
     {
+      name = "tsserver",
       locations = {
         ".bin/typescript-language-server",
       },
+      fallback_locations = {
+        "node_modules/.bin/typescript-language-server",
+        "typescript-language-server",
+      },
     }
   )
-
-  opts.fallback_dir = opts.fallback_dir or vim.env.XDG_DATA_HOME or "~/.local/share"
-  opts.fallback_dir = string.format("%s/lsp/tsserver/%s", opts.fallback_dir, "typescript-language-server")
 
   return language_server_cmd(opts)
 end
