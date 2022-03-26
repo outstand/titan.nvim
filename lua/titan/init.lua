@@ -2,11 +2,11 @@ local M = {}
 
 M.packer_config = require("titan.packer-config").config()
 
-local default_opts = {
+local config = {
 }
 
-function M.setup(conf)
-  conf = vim.tbl_deep_extend('force', default_opts, conf or {})
+function M.setup(opts)
+  config = vim.tbl_deep_extend('force', config, opts or {})
 
   require('titan.global')
   require("titan.treesitter").setup()
@@ -16,11 +16,7 @@ function M.setup(conf)
   require("titan.options").setup()
   require("titan.tabby-config").setup()
 
-  -- nvim-tree
-  local nvim_tree = require("nvim-tree")
-  nvim_tree.setup {
-    auto_close = true,
-  }
+  require("titan.plugins").setup()
 
   -- Gitsigns
   require('gitsigns').setup {
@@ -30,18 +26,6 @@ function M.setup(conf)
       delete = { text = '_' },
       topdelete = { text = '‾' },
       changedelete = { text = '~' },
-    },
-  }
-
-  -- Telescope
-  require('telescope').setup {
-    defaults = {
-      mappings = {
-        i = {
-          ['<C-u>'] = false,
-          ['<C-d>'] = false,
-        },
-      },
     },
   }
 
@@ -130,8 +114,6 @@ function M.setup(conf)
   -- gutentags
   vim.g.gutentags_cache_dir = "~/.cache/gutentags"
 
-  -- Enable telescope fzf native
-  require('telescope').load_extension 'fzf'
 
   -- toggleterm
   local toggleterm = require("toggleterm")
