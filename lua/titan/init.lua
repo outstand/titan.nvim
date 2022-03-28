@@ -14,20 +14,8 @@ function M.setup(opts)
   require("titan.formatting").setup()
   require("titan.keybindings").setup()
   require("titan.options").setup()
-  require("titan.tabby-config").setup()
 
-  require("titan.plugins").setup()
-
-  -- Gitsigns
-  require('gitsigns').setup {
-    signs = {
-      add = { text = '+' },
-      change = { text = '~' },
-      delete = { text = '_' },
-      topdelete = { text = '‾' },
-      changedelete = { text = '~' },
-    },
-  }
+  require("titan.plugins").setup(config.plugins)
 
   -- Create window splits easier. The default
   -- way is Ctrl-w,v and Ctrl-w,s. I remap
@@ -38,48 +26,6 @@ function M.setup(opts)
   -- Clear current search highlight by double tapping //
   vim.api.nvim_set_keymap('n', '//', ':nohlsearch<CR>', { silent = true })
 
-  --Set statusbar
-  local lunarized_lualine = require('lunarized.lualine')
-  local function toggleterm_statusline()
-    return 'ToggleTerm #' .. vim.b.toggle_number
-  end
-  local custom_toggleterm = {
-    sections = {
-      lualine_a = {'mode'},
-      lualine_b = { toggleterm_statusline },
-    },
-    inactive_sections = {
-      lualine_c = { toggleterm_statusline },
-    },
-    filetypes = { 'toggleterm' },
-  }
-
-  require('lualine').setup {
-    options = {
-      icons_enabled = true,
-      theme = lunarized_lualine,
-      component_separators = '|',
-      section_separators = '',
-    },
-    sections = {
-      lualine_a = {'mode'},
-      lualine_b = {'branch', 'diff', 'diagnostics'},
-      lualine_c = {'filename', "require'lsp-status'.status()"},
-      lualine_x = {'encoding', 'fileformat', 'filetype'},
-      lualine_y = {'progress'},
-      lualine_z = {'location'}
-    },
-    extensions = {
-      custom_toggleterm,
-      'fugitive',
-      'nvim-tree',
-      'quickfix',
-    },
-  }
-
-
-  --Enable Comment.nvim
-  require('Comment').setup()
 
   --Remap space as leader key
   vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
@@ -113,58 +59,6 @@ function M.setup(opts)
 
   -- gutentags
   vim.g.gutentags_cache_dir = "~/.cache/gutentags"
-
-
-  -- toggleterm
-  local toggleterm = require("toggleterm")
-
-  toggleterm.setup{
-    size = function(term)
-      if term.direction == "horizontal" then
-        return 20
-      elseif term.direction == "vertical" then
-        return vim.o.columns * 0.4
-      end
-    end,
-    persist_size = false,
-    on_open = function(term)
-      term.opened = term.opened or false
-
-      if not term.opened then
-        term:send("eval $(desk load)")
-      end
-
-      term.opened = true
-    end,
-  }
-
-  function _G.set_terminal_keymaps()
-    local opts = {noremap = true}
-    vim.api.nvim_buf_set_keymap(0, 't', '<esc>', [[<C-\><C-n>]], opts)
-    vim.api.nvim_buf_set_keymap(0, 't', '<C-h>', [[<C-\><C-n><C-W>h]], opts)
-    vim.api.nvim_buf_set_keymap(0, 't', '<C-j>', [[<C-\><C-n><C-W>j]], opts)
-    vim.api.nvim_buf_set_keymap(0, 't', '<C-k>', [[<C-\><C-n><C-W>k]], opts)
-    vim.api.nvim_buf_set_keymap(0, 't', '<C-l>', [[<C-\><C-n><C-W>l]], opts)
-  end
-
-  -- if you only want these mappings for toggle term use term://*toggleterm#* instead
-  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
-
-  require('telescope').load_extension("termfinder")
-
-  vim.g["test#custom_strategies"] = {
-    toggleterm = function(cmd)
-      toggleterm.exec(cmd)
-    end,
-  }
-
-  vim.g["test#strategy"] = "toggleterm"
-  vim.g["test#ruby#use_binstubs"] = 0
-  vim.g["test#ruby#bundle_exec"] = 0
-
-  -- TODO:
-  -- If terminal is hidden when tests finish: show notification
-  -- Add movement keys to terminal setup
 end
 
 return M

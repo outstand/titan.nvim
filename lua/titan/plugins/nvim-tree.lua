@@ -1,15 +1,14 @@
 local M = {}
 
 local config = {
+  auto_close = true,
 }
 
 function M.setup(opts)
   config = vim.tbl_deep_extend('force', config, opts or {})
 
   local nvim_tree = require("nvim-tree")
-  nvim_tree.setup {
-    auto_close = true,
-  }
+  nvim_tree.setup(config)
 
   -- which-key
   local wk = require('which-key')

@@ -1,21 +1,20 @@
 local M = {}
 
 local config = {
+  defaults = {
+    mappings = {
+      i = {
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
+      },
+    },
+  },
 }
 
 function M.setup(opts)
   config = vim.tbl_deep_extend('force', config, opts or {})
 
-  require('telescope').setup {
-    defaults = {
-      mappings = {
-        i = {
-          ['<C-u>'] = false,
-          ['<C-d>'] = false,
-        },
-      },
-    },
-  }
+  require('telescope').setup(config)
 
   -- Enable telescope fzf native
   require('telescope').load_extension 'fzf'
