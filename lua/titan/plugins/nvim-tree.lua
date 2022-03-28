@@ -1,7 +1,6 @@
 local M = {}
 
 local config = {
-  auto_close = true,
 }
 
 function M.setup(opts)
