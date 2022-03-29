@@ -5,6 +5,7 @@ local config = {
 }
 
 M.plugins = {
+  "comment",
   "gitsigns",
   "lualine",
   "nvim-tree",
