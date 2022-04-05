@@ -6,6 +6,7 @@ local config = {
       i = {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+        ['<C-a>'] = "select_all",
       },
     },
   },
