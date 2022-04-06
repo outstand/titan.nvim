@@ -5,6 +5,8 @@ local lsputil = require("lspconfig.util")
 
 local lsp_installer = require("nvim-lsp-installer")
 
+local util = require("titan.util")
+
 local lsp_status = require("lsp-status")
 lsp_status.config {
   current_function = false,
@@ -39,25 +41,6 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
 
-local function dir_has_file(dir, name)
-  return lsputil.path.exists(lsputil.path.join(dir, name)), lsputil.path.join(dir, name)
-end
-
-local function workspace_root()
-  local cwd = vim.loop.cwd()
-
-  if dir_has_file(cwd, "compose.yml") or dir_has_file(cwd, "docker-compose.yml") then
-    return cwd
-  end
-
-  local function cb(dir, _)
-    return dir_has_file(dir, "compose.yml") or dir_has_file(dir, "docker-compose.yml")
-  end
-
-  local root, _ = lsputil.path.traverse_parents(cwd, cb)
-  return root
-end
-
 --- Build the language server command.
 -- @param opts options
 -- @param opts.name string Server name
@@ -74,13 +57,13 @@ local function language_server_cmd(opts)
   local fallback_locations = opts.fallback_locations or {}
   local fallback_root = opts.fallback_root or "~/.local/share/lsp"
 
-  local root = workspace_root()
+  local root = util.workspace_root()
   if not root then
     root = vim.loop.cwd()
   end
 
   for _, location in ipairs(locations) do
-    local exists, dir = dir_has_file(root, location)
+    local exists, dir = util.dir_has_file(root, location)
     if exists then
       logger.fmt_debug("language_server_cmd: %s", vim.fn.expand(dir))
       return vim.fn.expand(dir)
@@ -97,7 +80,7 @@ local function language_server_cmd(opts)
   end
 
   for _, location in ipairs(fallback_locations) do
-    local exists, dir = dir_has_file(root_dir, location)
+    local exists, dir = util.dir_has_file(root_dir, location)
     if exists then
       logger.fmt_debug("language_server_cmd: %s", vim.fn.expand(dir))
       return vim.fn.expand(dir)
