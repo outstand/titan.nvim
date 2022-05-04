@@ -50,9 +50,6 @@ function M.setup(opts)
   vim.g.indent_blankline_buftype_exclude = { 'terminal', 'nofile' }
   vim.g.indent_blankline_show_trailing_blankline_indent = false
 
-  -- vim-startify
-  vim.g.startify_change_to_vcs_root = 1
-
   if vim.fn.has('macunix') then
     vim.api.nvim_command('set rtp+=/opt/homebrew/opt/fzf')
   end

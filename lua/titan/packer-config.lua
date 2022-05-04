@@ -53,7 +53,13 @@ function M.config()
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
   use "folke/which-key.nvim"
-  use 'mhinz/vim-startify'
+  use {
+      'goolord/alpha-nvim',
+      requires = { 'kyazdani42/nvim-web-devicons' },
+      config = function ()
+          require'alpha'.setup(require'alpha.themes.startify'.config)
+      end
+  }
   use {
     'kyazdani42/nvim-tree.lua',
     requires = {
