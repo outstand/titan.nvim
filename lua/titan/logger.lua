@@ -1,4 +1,4 @@
--- log.lua
+-- logger.lua
 --
 -- Inspired by rxi/log.lua
 -- Modified by tjdevries and can be found at github.com/tjdevries/vlog.nvim
@@ -38,19 +38,18 @@ local default_config = {
   float_precision = 0.01,
 }
 
--- {{{ NO NEED TO CHANGE
-local log = {}
+local logger = {}
 
 local unpack = unpack or table.unpack
 
-log.new = function(config, standalone)
+logger.new = function(config, standalone)
   config = vim.tbl_deep_extend("force", default_config, config)
 
   local outfile = string.format('%s/%s.log', vim.api.nvim_call_function('stdpath', {'cache'}), config.plugin)
 
   local obj
   if standalone then
-    obj = log
+    obj = logger
   else
     obj = {}
   end
@@ -153,7 +152,7 @@ log.new = function(config, standalone)
   return obj
 end
 
-log.new(default_config, true)
+logger.new(default_config, true)
 -- }}}
 
 return log
