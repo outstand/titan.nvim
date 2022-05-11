@@ -155,4 +155,4 @@ end
 logger.new(default_config, true)
 -- }}}
 
-return log
+return logger
