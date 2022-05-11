@@ -1,4 +1,4 @@
-_G.logger = require("logger").new {
+_G.logger = require("titan.logger").new {
   level = "info",
 }
 
