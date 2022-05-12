@@ -10,7 +10,11 @@ function M.setup(opts)
   config = vim.tbl_deep_extend('force', config, opts or {})
 
   -- toggleterm
-  local toggleterm = require("toggleterm")
+  local ok, toggleterm = pcall(require, "toggleterm")
+  if not ok then
+    print("Unable to require toggleterm")
+    return
+  end
 
   local function on_first_open(term)
     if config.desk_integration then
