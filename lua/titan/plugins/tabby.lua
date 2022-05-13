@@ -38,64 +38,66 @@ end
 local palette = require('lunarized').palette
 local colors = require('lunarized').colors
 
-local active_tab_bg = palette.accent.darken(5)
-local inactive_tab_bg = colors.base03
-local top_win_bg = palette.bg_tools.lighten(6)
-local win_bg = palette.bg_tools.lighten(4)
+local fg_tools = palette.fg_tools.hex
+local bg_tools = palette.bg_tools.hex
+local active_tab_bg = palette.accent.darken(5).hex
+local inactive_tab_bg = colors.base03.hex
+local top_win_bg = palette.bg_tools.lighten(6).hex
+local win_bg = palette.bg_tools.lighten(4).hex
 
 function M.setup(opts)
   config = vim.tbl_deep_extend('force', config, opts or {})
 
   local tabline = {
-    hl = { fg = palette.fg_tools, bg = palette.bg_tools },
+    hl = { fg = fg_tools, bg = bg_tools},
     layout = config.layout,
     head = {
-      { '  ', hl = { fg = palette.fg_tools, bg = palette.bg_tools } },
-      { '', hl = { fg = palette.bg_tools, bg = palette.bg_tools } },
+      { '  ', hl = { fg = fg_tools, bg = bg_tools } },
+      { '', hl = { fg = bg_tools, bg = bg_tools } },
     },
     active_tab = {
       label = function(tabid)
         return {
           tab_label(tabid, true),
-          hl = { fg = colors.base03, bg = active_tab_bg }
+          hl = { fg = colors.base03.hex, bg = active_tab_bg }
         }
       end,
-      left_sep = { '', hl = { fg = active_tab_bg, bg = palette.bg_tools } },
-      right_sep = { '', hl = { fg = active_tab_bg, bg = palette.bg_tools } },
+      left_sep = { '', hl = { fg = active_tab_bg, bg = bg_tools } },
+      right_sep = { '', hl = { fg = active_tab_bg, bg = bg_tools } },
     },
     inactive_tab = {
       label = function(tabid)
         return {
           tab_label(tabid),
-          hl = { fg = palette.fg_tools, bg = inactive_tab_bg }
+          hl = { fg = fg_tools, bg = inactive_tab_bg }
         }
       end,
-      left_sep = { '', hl = { fg = inactive_tab_bg, bg = palette.bg_tools } },
-      right_sep = { '', hl = { fg = inactive_tab_bg, bg = palette.bg_tools } },
+      left_sep = { '', hl = { fg = inactive_tab_bg, bg = bg_tools } },
+      right_sep = { '', hl = { fg = inactive_tab_bg, bg = bg_tools } },
     },
     top_win = {
       label = function(winid)
         return {
           win_label(winid, true),
-          hl = { fg = palette.fg_tools, bg = top_win_bg, style = "bold" }
+          hl = { fg = fg_tools, bg = top_win_bg, style = "bold" }
         }
       end,
-      left_sep = { '', hl = { fg = top_win_bg, bg = palette.bg_tools } },
-      right_sep = { '', hl = { fg = top_win_bg, bg = palette.bg_tools } },
+      left_sep = { '', hl = { fg = top_win_bg, bg = bg_tools } },
+      right_sep = { '', hl = { fg = top_win_bg, bg = bg_tools } },
     },
     win = {
       label = function(winid)
         return {
           win_label(winid),
-          hl = { fg = palette.fg_tools, bg = win_bg }
+          hl = { fg = fg_tools, bg = win_bg }
         }
       end,
-      left_sep = { '', hl = { fg = win_bg, bg = palette.bg_tools } },
-      right_sep = { '', hl = { fg = win_bg, bg = palette.bg_tools } },
+      left_sep = { '', hl = { fg = win_bg, bg = bg_tools } },
+      right_sep = { '', hl = { fg = win_bg, bg = bg_tools } },
     },
     tail = {
-      { '', hl = { fg = palette.bg_tools, bg = palette.bg_tools } },
-      { '  ', hl = { fg = palette.fg_tools, bg = palette.bg_tools } },
+      { '', hl = { fg = bg_tools, bg = bg_tools } },
+      { '  ', hl = { fg = fg_tools, bg = bg_tools } },
     },
   }
 
