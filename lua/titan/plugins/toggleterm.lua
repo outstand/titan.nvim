@@ -32,7 +32,9 @@ function M.setup(opts)
         return vim.o.columns * 0.4
       end
     end,
+    shade_terminals = false,
     persist_size = false,
+    persist_mode = false,
     on_open = function(term)
       term.opened = term.opened or false
 
