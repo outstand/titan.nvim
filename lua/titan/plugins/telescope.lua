@@ -10,6 +10,11 @@ local config = {
       },
     },
   },
+  pickers = {
+    buffers = {
+      sort_mru = true,
+    },
+  },
 }
 
 function M.setup(opts)
