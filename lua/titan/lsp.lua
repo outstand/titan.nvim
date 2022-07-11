@@ -1,9 +1,22 @@
 local M = {}
 
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.setup{
+  ensure_installed = {
+    'clangd',
+    'rust_analyzer',
+    'pyright',
+    'terraformls',
+    'bashls',
+    'elixirls',
+    'solargraph',
+    'tsserver',
+    'sumneko_lua',
+  },
+}
+
 local lspconfig = require 'lspconfig'
 local lsputil = require("lspconfig.util")
-
-local lsp_installer = require("nvim-lsp-installer")
 
 local util = require("titan.util")
 
@@ -261,28 +274,7 @@ function M.setup()
     end,
   }
 
-  -- Enable the following language servers
-  local servers = {
-    'clangd',
-    'rust_analyzer',
-    'pyright',
-    'terraformls',
-    'bashls',
-    'elixirls',
-    'solargraph',
-    'tsserver',
-    'sumneko_lua',
-  }
-
-  for _, name in ipairs(servers) do
-    local server_is_found, server = lsp_installer.get_server(name)
-    if server_is_found and not server:is_installed() then
-      print("Installing " .. name)
-      server:install()
-    end
-  end
-
-  lsp_installer.on_server_ready(function(server)
+  for _, server in ipairs(lsp_installer.get_installed_servers()) do
     local opts = {
       on_attach = on_attach,
       capabilities = capabilities,
@@ -292,8 +284,8 @@ function M.setup()
       enhance_server_opts[server.name](opts)
     end
 
-    server:setup(opts)
-  end)
+    lspconfig[server.name].setup(opts)
+  end
 
   -- luasnip setup
   local luasnip = require 'luasnip'
