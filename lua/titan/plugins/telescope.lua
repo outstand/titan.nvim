@@ -29,10 +29,14 @@ function M.setup(opts)
   local wk = require('which-key')
   local t_builtin = require('telescope.builtin')
 
+  local function find_command()
+    return { "fd", "--type", "f", "--no-ignore-vcs" }
+  end
+
   local function find_files()
     t_builtin.find_files({
-      hidden = true,
-      no_ignore = true,
+        find_command = find_command,
+        hidden = true,
     })
   end
 
