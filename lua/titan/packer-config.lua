@@ -53,7 +53,7 @@ function M.config()
   use "ryansch/lunarized"
   use {
     'nvim-lualine/lualine.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+    requires = { 'kyazdani42/nvim-web-devicons' }
   }
   use "folke/which-key.nvim"
   use {
@@ -66,7 +66,7 @@ function M.config()
   use {
     'kyazdani42/nvim-tree.lua',
     requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+      'kyazdani42/nvim-web-devicons',
     },
   }
   use 'tpope/vim-eunuch'
