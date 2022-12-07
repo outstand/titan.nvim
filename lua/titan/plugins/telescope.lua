@@ -25,6 +25,9 @@ function M.setup(opts)
   -- Enable telescope fzf native
   require('telescope').load_extension 'fzf'
 
+  -- Enable githubcoauthors
+  require('telescope').load_extension('githubcoauthors')
+
   -- which-key
   local wk = require('which-key')
   local t_builtin = require('telescope.builtin')
@@ -44,6 +47,7 @@ function M.setup(opts)
     f = {
       name = "telescope finders",
       b = { t_builtin.buffers, "Lists open buffers" },
+      c = { require('telescope').extensions.githubcoauthors.coauthors, "Add coauthors" },
       f = { find_files, "Find file" },
       h = { t_builtin.help_tags, "Lists available help tags " },
       t = { t_builtin.tags, "Lists tags in current directory " },
