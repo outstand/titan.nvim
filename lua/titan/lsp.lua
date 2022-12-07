@@ -39,8 +39,20 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
 
 local function lsp_setup(server_name, opts)
-  logger.debug("Adding", server_name, "to lspconfig")
-  lspconfig[server_name].setup(opts)
+  local s = util.switch {
+    ["tsserver"] = function()
+      logger.debug("Adding", server_name, "to lspconfig via typescript")
+      require("typescript").setup({
+        server = opts
+      })
+    end,
+    default = function()
+      logger.debug("Adding", server_name, "to lspconfig")
+      lspconfig[server_name].setup(opts)
+    end
+  }
+
+  s:case(server_name)
 end
 
 local function build_command(server_name, path, args)
@@ -66,6 +78,7 @@ local function lsp_cmd_override(server_name, opts, cmd_path, args)
   end
 
   opts.on_new_config = function(new_config, _)
+    logger.debug("on_new_config")
     local new_cmd = build_command(server_name, cmd_path, args)
     if new_cmd ~= nil then
       new_config.cmd = new_cmd
@@ -164,7 +177,6 @@ function M.setup()
 
       opts.init_options = {
         hostInfo = "neovim",
-        logVerbosity = "verbose"
       }
 
       lsp_setup(server_name, opts)

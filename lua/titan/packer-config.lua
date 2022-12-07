@@ -46,6 +46,12 @@ function M.config()
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
 
   use 'mfussenegger/nvim-dap'
+  use "rcarriga/nvim-dap-ui"
+  use "theHamsta/nvim-dap-virtual-text"
+  use "jbyuki/one-small-step-for-vimkind"
+
+  -- Language enhancements
+  use "jose-elias-alvarez/typescript.nvim"
 
   -- Customizations
   use "rktjmp/lush.nvim"
