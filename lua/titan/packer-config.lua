@@ -111,6 +111,16 @@ function M.config()
   use 'tknightz/telescope-termfinder.nvim'
   use "nanozuki/tabby.nvim"
 
+  use {
+    "ryansch/habitats.nvim",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
+      "natecraddock/sessions.nvim",
+      "natecraddock/workspaces.nvim",
+    }
+  }
+
   return plugin_specs
 end
 

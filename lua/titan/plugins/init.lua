@@ -6,7 +6,9 @@ local config = {
 
 M.plugins = {
   "comment",
+  "dap",
   "gitsigns",
+  "habitats",
   "lualine",
   "nvim-tree",
   "tabby",
