@@ -3,6 +3,15 @@ local M = {}
 function M.setup()
   -- Treesitter configuration
   -- Parsers must be installed manually via :TSInstall
+  local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+  parser_config.ruby = {
+    install_info = {
+      url = "https://github.com/tree-sitter/tree-sitter-ruby",
+      revision = "c91960320d0f337bdd48308a8ad5500bd2616979", -- v0.20.0
+      files = { "src/parser.c", "src/scanner.cc" },
+    },
+  }
+
   require('nvim-treesitter.configs').setup {
     ensure_installed = {
       'bash',
@@ -11,6 +20,8 @@ function M.setup()
       'dockerfile',
       -- 'elixir',
       'erlang',
+      'gitcommit',
+      'gitignore',
       'go',
       'graphql',
       'heex',
@@ -27,7 +38,9 @@ function M.setup()
       'regex',
       'ruby',
       'rust',
+      'terraform',
       'toml',
+      'tsx',
       'typescript',
       'vim',
       'yaml',
@@ -81,6 +94,24 @@ function M.setup()
           ['[M'] = '@function.outer',
           ['[]'] = '@class.outer',
         },
+      },
+    },
+    playground = {
+      enable = true,
+      disable = {},
+      updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+      persist_queries = false, -- Whether the query persists across vim sessions
+      keybindings = {
+        toggle_query_editor = 'o',
+        toggle_hl_groups = 'i',
+        toggle_injected_languages = 't',
+        toggle_anonymous_nodes = 'a',
+        toggle_language_display = 'I',
+        focus_language = 'f',
+        unfocus_language = 'F',
+        update = 'R',
+        goto_node = '<cr>',
+        show_help = '?',
       },
     },
   }

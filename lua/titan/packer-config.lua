@@ -39,6 +39,7 @@ function M.config()
   }
   -- Additional textobjects for treesitter
   use 'nvim-treesitter/nvim-treesitter-textobjects'
+  use 'nvim-treesitter/playground'
   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
   use "williamboman/mason.nvim"
   use "williamboman/mason-lspconfig.nvim"
