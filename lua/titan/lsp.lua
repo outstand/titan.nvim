@@ -98,7 +98,7 @@ function M.setup()
       'elixirls',
       'solargraph',
       'tsserver',
-      'sumneko_lua',
+      'lua_ls',
     },
   }
 
@@ -182,7 +182,7 @@ function M.setup()
       lsp_setup(server_name, opts)
     end,
 
-    ["sumneko_lua"] = function(server_name)
+    ["lua_ls"] = function(server_name)
       local opts = {
         on_attach = on_attach,
         capabilities = capabilities,
