@@ -122,6 +122,9 @@ function M.config()
     }
   }
 
+  use 'ray-x/guihua.lua' -- recommended if need floating window support
+  use 'ray-x/go.nvim'
+
   return plugin_specs
 end
 
